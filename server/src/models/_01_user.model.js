@@ -62,9 +62,17 @@ userSchema.pre("save", async function (next) {
 
 //we can create our own utility methods, syntax: userSchema.methods.methodName = function(){}
 
-userSchema.methods.isPasswordCorrect = async function(password){
-    return await bcrypt.compare(password, this.password)
-}
+userSchema.methods.isPasswordCorrect = async function (password) {
+    try {
+        console.log(`Comparing entered password with stored hash...`);
+        const isMatch = await bcrypt.compare(password, this.password);
+        console.log(`Password match result: ${isMatch}`);
+        return isMatch;
+    } catch (error) {
+        console.error("Error comparing passwords:", error);
+        return false;
+    }
+};
 
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign(
