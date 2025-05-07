@@ -45,7 +45,9 @@ app.use(
     )
 )
 
-
+//configuring routes
+import { userRouter } from "./routes/_01_user.routes.js"
+app.use('/api/users',userRouter);
 
 
 export {app}
