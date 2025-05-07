@@ -1,6 +1,8 @@
 import {v2 as cloudinary} from "cloudinary"///make an account in cludinary.com and make API key and secret key and cloud name and add them in .env file
 import fs from "fs"//for file storage locally
+import dotenv from "dotenv";
 
+dotenv.config();
 
 //ham kaise file upload karege means, multer package se file upload karne ke baad, us file ko cloudinary pe upload karne ke liye ye function banaya he
 
@@ -11,6 +13,7 @@ cloudinary.config({
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
+    console.log(`Cloudinary service API keys: cloud-name:${process.env.CLOUDINARY_CLOUD_NAME}, api_key:${process.env.CLOUDINARY_API_KEY}, api-secret:${process.env.CLOUDINARY_API_SECRET}`);
     try {
         if (!localFilePath) return null
         //upload the file on cloudinary

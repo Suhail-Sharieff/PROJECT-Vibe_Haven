@@ -1,6 +1,6 @@
 import { asyncHandler } from "../Utils/_03_asyncHandler.utils.js";
-import {ApiError} from "../Utils/_04_Api_Error.utils.js"
-import {User} from "../models/_01_user.model.js"
+import { ApiError } from "../Utils/_04_Api_Error.utils.js"
+import { User } from "../models/_01_user.model.js"
 import { uploadOnCloudinary } from "../Utils/_06_cloudinary.file_uploading.util.js";
 import { ApiResponse } from "../Utils/_05_Api_Response.utils.js";
 
@@ -49,83 +49,85 @@ user schema:
         }
 */
 
-const registerUser=asyncHandler(
+const registerUser = asyncHandler(
     //steps: getAsJson->validate->checkIfAlreadyExists->ifNotThenTakeAvatar->UploadToCLpudinary->PutInMongoose
-    async(req,res)=>{
-        
-        //step0: upload avatar, done as middleware
-        
-        const {userName,fullName,email,password}=req.body;
+    async (req, res) => {
+
+        //step0: upload avatar, done as middleware  
+        console.log("Receiving request body.....");
+        const { userName, fullName, email, password } = req.body;
         console.log(`recived body for post method register: ${JSON.stringify(req.body)}`);
 
         //step1: validate if feilds r not empty
-        if(
-            [userName,fullName,email,password]
-            .some(
-                (each)=>e?.trim() === ""
-            )
-        ){
-            throw new ApiError(400,"Username/Fullname/Email/Password cannot be empty !");
+        if (
+            [userName, fullName, email, password]
+                .some(
+                    (e) => e?.trim() === ""
+                )
+        ) {
+            throw new ApiError(400, "Username/Fullname/Email/Password cannot be empty !");
         }
 
         //now fields r valid
         //step2: check if user already exists in DB
-        const userAlreadyExists=User.findOne(
-            {
-                $or:[userName,email] //checks if userName or email already exists
-            }
-        )
-        if(userAlreadyExists){
-            throw new ApiError(400,"Username/Email already exists!");
+        console.log("Checking if user already exists.....");
+        const userAlreadyExists = await User.findOne({
+            $or: [
+                { userName: userName }, // Check if userName exists
+                { email: email }        // Check if email exists
+            ]
+        });
+        if (userAlreadyExists) {
+            throw new ApiError(400, "Username/Email already exists!");
         }
         //now user is not present in DB
 
         //multer has now added file in req.body, lets access it to register user
         //step3: upload avatar to clodinary
-        const avatarImgLocalPath=req.files?.avatar[0]?.path
-        const coverImgLocalPath=req.files?.coverImage[0]?.path
+        console.log("Uploading avatar and coverImage to cloudinary.....");
+        const avatarImgLocalPath = req.files?.avatar[0]?.path
+        const coverImgLocalPath = req.files?.coverImage[0]?.path
         console.log(`paths received from multer:\n avatar:${avatarImgLocalPath} \n coverImage:${coverImgLocalPath}`);
 
         //check if files r not null
-        if(!avatarImgLocalPath) throw new ApiError(400,"Avatar Image is required!")
-        const avatarUploaded=await uploadOnCloudinary(avatarImgLocalPath)
-        const coverImgUploaded=await uploadOnCloudinary(coverImgLocalPath)
-        if(!avatarUploaded) throw new ApiError(400,"Failed to upload avatar Image!")
+        if (!avatarImgLocalPath) throw new ApiError(400, "Avatar Image is required!")
+        const avatarUploaded = await uploadOnCloudinary(avatarImgLocalPath)
+        if (!avatarUploaded) throw new ApiError(400, "Failed to upload avatar Image!")
+        const coverImgUploaded = await uploadOnCloudinary(coverImgLocalPath)
+        console.log("Images uploaded to clodinary...");
 
         //now files r uploaded to cloudinary
         //step4: all things r goin good, register user into database
-
-        const userCreatedInDB=await User.create(
+        console.log("Registering user in MongoDB....");
+        const userCreatedInDB = await User.create(
             {
-                avatar:avatarUploaded.url,
-                coverImage:coverImgUploaded?.url || "",
-                fullName:fullName,
-                userName:userName.toLowerCase(),
-                email:email,
-                password:password,
+                avatar: avatarUploaded.url,
+                coverImage: coverImgUploaded?.url || "",
+                fullName: fullName,
+                userName: userName.toLowerCase(),
+                email: email,
+                password: password,
 
             }
         )
-        
 
+        console.log("Cheking if user is registered sucessfully....");
         //check if user created is successfulll, by finding generated id
-        const user=await User.findById(
+        const user = await User.findById(
             userCreatedInDB._id
         ).select(
             "-password -refreshToken"  //try selecting all feilds except password and refreshToken
         )
 
-        if(!user){
-            throw new ApiError(400,"Failed to register user!")
+        if (!user) {
+            throw new ApiError(400, "Failed to register user!")
         }
 
 
         //send success reponse
-
+        console.log(`User registered sucessfully`);
         return res
-        .send(200)
-        .json(
-            new ApiResponse(
+            .send(new ApiResponse(
                 200,
                 user,
                 `User created succeesfully: User: ${JSON.stringify(user)}`
@@ -138,4 +140,4 @@ const registerUser=asyncHandler(
     }
 );
 
-export {registerUser}
+export { registerUser }
