@@ -1,6 +1,7 @@
 import { Router } from "express"
-import { registerUser,loginUser } from "../controller/_01_user.controller.js"
+import { registerUser,loginUser, logoutUser } from "../controller/_01_user.controller.js"
 import {upload} from "../middleware/_01_multer.middle_ware.js"
+import { verifyJWT } from "../middleware/_02_auth.middleware.js";
 
 const userRouter=Router()
 
@@ -27,6 +28,13 @@ userRouter
 .route('/login')
 .post(
     loginUser,
+)
+
+userRouter
+.route('/logout')
+.post(
+    verifyJWT,//middleware to append user field to req after matching actuall  accessToken and accessToken passed to req with cookie
+    logoutUser
 )
 
    

@@ -210,7 +210,7 @@ const loginUser=asyncHandler(
         
         const {accessToken,refreshToken}=await get_refresh_access_token(user._id)
 
-        console.log("Sending these tokens as cookies for logged session...");
+        console.log("Sent these tokens as cookies for logged session...");
 
         return res
         .status(200)
@@ -219,15 +219,15 @@ const loginUser=asyncHandler(
             accessToken,
             {
                 httpOnly:true,
-                secure:true
+                secure:false
             }
         )
         .cookie(
-            "refreshToekn",
+            "refreshToken",
             refreshToken,
             {
                 httpOnly:true,
-                secure:true
+                secure:false
             }
         )
         .json(
@@ -250,4 +250,48 @@ const loginUser=asyncHandler(
     }
 );
 
-export { registerUser,loginUser }
+//***********Logout */
+//idea is how to reset refreshToken of curr user to undefined, meaninf logout usser, but but but bfr that we need to append user field to req, to do that i made a middle ware called verifyJWT in _02_auth.middleware.js, where i asked jst to verify curr access token and access token passed to cookie during login if matched it will append user field to req, now i can access user directly using req paramater, dont forget to add middle ware in routes
+const logoutUser=asyncHandler(
+    async(req,res)=>{
+        if(!req.user){
+            throw new ApiError(400,"JWT failed to append user field to request while logging out...")
+        }
+        console.log("User field avaliable in req now...");
+        
+        console.log("Setting access token of user to undefined bfr logout...");
+
+        const updatedUser=await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set:{
+                    refreshToken:undefined
+                }
+            },
+            {
+                new:true,//now this returns updated user
+            }
+        )
+
+        if (!updatedUser) {
+            console.error("Failed to update user refresh token.");
+            throw new ApiError(500, "Failed to update user refresh token.");
+        }
+
+        console.log("Set refresh token to undefined, logout sucess..");
+
+        return res
+        .status(200)
+        .clearCookie("accessToken",{httpOnly:true,secure:false})
+        .clearCookie("refreshToken",{httpOnly:true,secure:false})
+        .json(
+            new ApiResponse(
+                200,
+                updatedUser,
+                "Logout success"
+            )
+        )
+    }
+)
+
+export { registerUser,loginUser,logoutUser }
