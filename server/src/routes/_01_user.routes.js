@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { registerUser,loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar, updateUserCoverImage, getChannelInfo } from "../controller/_01_user.controller.js"
+import { registerUser,loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar, updateUserCoverImage, getChannelInfo, getWatchHistory } from "../controller/_01_user.controller.js"
 import {upload} from "../middleware/_01_multer.middle_ware.js"
 import { verifyJWT } from "../middleware/_02_auth.middleware.js";
 
@@ -23,6 +23,8 @@ userRouter
     ),
     registerUser
 );
+
+//to apply jswt verify on all routs just say router.use(verifyjwt), then can use normal post without jwt middle ware
 
 userRouter
 .route('/login')
@@ -63,6 +65,13 @@ userRouter
 .route('/getChannelInfo/:userName')
 .post(
     getChannelInfo
+)
+
+
+userRouter
+.route('/getWatchHistory')
+.get(
+    verifyJWT,getWatchHistory
 )
 
 export {userRouter}

@@ -5,6 +5,8 @@ import { uploadOnCloudinary } from "../Utils/_06_cloudinary.file_uploading.util.
 import { ApiResponse } from "../Utils/_05_Api_Response.utils.js";
 import { get_refresh_access_token } from "../Utils/_07_token_generator.utils.js";
 import { v2 as cloudinary } from "cloudinary"
+import { Video } from "../models/_02_video.model.js";
+import mongoose from "mongoose";
 /*
 user schema:
  userName: {
@@ -264,8 +266,8 @@ const logoutUser = asyncHandler(
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
             {
-                $set: {
-                    refreshToken: undefined
+                $unset: {
+                    refreshToken: 1
                 }
             },
             {
@@ -607,6 +609,78 @@ const getChannelInfo = asyncHandler(
 )
 
 
+//---------get meth watchHisty
+
+//in front end, when user will clik on watch hustory he needs to know, [that video ke owner ka {fullName,userName,avatar}] and also [that video ka {thumbnail,title,description}]
+
+//flow: [videos collection ko join karlo using lookup] -> [fetch All video Ke REFERENCE stored in watchHistoryArray of user -> us refrence se owner dhoond nikalo jo ki REFER karta ha ek user ko -> us user ka full name , userName aur avatar nikalo -> add kardo feilds be using addFields] -> [ab video ka thubmnail, desc, title nakalo ] -> project kardo
+
+//how?: "users" has watchHistory array field each elemnt of it refrences video as perschema
+
+const getWatchHistory = asyncHandler(//make sure u pass verifyJWT as middleware first so that now req has user field and u can access user using req.user
+    async (req, res) => {
+        if (!req.user) {
+            throw new ApiError(400, "Unauthrized access to watch history!")
+        }
+        console.log("Trying to access watch history...");
+        const { _id } = req.user;
+        const watchHistory = await User.aggregate(
+            [
+                {
+                    $match: {
+                        _id: _id
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "videos",
+                        localField: "watchHistory",
+                        foreignField: "_id",
+                        as: "watchHistory",
+                        pipeline: [
+                            {
+                                $lookup: {
+                                    from: "users",
+                                    localField: "owner",
+                                    foreignField: "_id",
+                                    as: "owner",
+                                    pipeline: [
+                                        {
+                                            $project: {
+                                                fullName: 1,
+                                                username: 1,
+                                                avatar: 1
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                $addFields: {
+                                    owner: {
+                                        $first: "$owner"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        )
+        console.log("Watch histroy fetched successfully...");
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    watchHistory[0].watchHistory,
+                    "Watch history fetched !"
+                )
+            )
+    }
+)
 
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar, updateUserCoverImage, getChannelInfo }
+
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar, updateUserCoverImage, getChannelInfo, getWatchHistory }
