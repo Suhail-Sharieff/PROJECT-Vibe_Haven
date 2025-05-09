@@ -4,7 +4,7 @@ import { User } from "../models/_01_user.model.js"
 import { uploadOnCloudinary } from "../Utils/_06_cloudinary.file_uploading.util.js";
 import { ApiResponse } from "../Utils/_05_Api_Response.utils.js";
 import { get_refresh_access_token } from "../Utils/_07_token_generator.utils.js";
-import {v2 as cloudinary} from "cloudinary"
+import { v2 as cloudinary } from "cloudinary"
 /*
 user schema:
  userName: {
@@ -522,6 +522,91 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 
+//---------APi for getting channel details, the frontend guy needs to pass userName as params in url
+const getChannelInfo = asyncHandler(
+    async (req, res) => {
+        const { userName } = req.params
+        console.log("Channel details requested...");
+        if (!userName) {
+            throw new ApiError(400, "No userName params provided in URL!")
+        }
+        console.log(`Building api body for ${userName} using mongoose aggregate pipelines....`);
+        const channelDetails = await User.aggregate(
+
+            [
+                //stage 1: fetch user from userName
+                { $match: { userName: "suhail" } },
+
+                //stage 2: get nSubscribers from subscriptions collection
+                {
+                    $lookup: {
+                        from: "subscriptions",
+                        localField: "_id",
+                        foreignField: "subscriber",
+                        as: "mySubscribers"
+                    }
+                },
+
+                //stage 3: get nSubscribed
+                {
+                    $lookup: {
+                        from: "subscriptions",
+                        localField: "_id",
+                        foreignField: "channel",
+                        as: "iSubscribedTo"
+                    }
+                },
+
+                //stage 4: project both new feilds
+                {
+                    $addFields: {
+                        nSubscribers: {
+                            $size: "$mySubscribers"
+                        },
+                        nSubscribed: {
+                            $size: "$iSubscribedTo"
+                        },
+                        haveISubscribedAlready: {
+                            $cond: {
+                                if: { $in: ["$id", "$iSubscribedTo.channel"] },
+                                then: true,
+                                else: false
+                            }
+                        }
+                    }
+                },
+
+                //stage 5: now have appended nSubscribers and nSubscribed, lets decide what ro send to frontend
+                {
+                    $project: {
+                        channelName: "$fullName",
+                        nSubscribers: 1,
+                        nSubscribed: 1,
+                        haveISubscribedAlready: 1,
+                        avatar: 1,
+                        coverImage: 1,
+                        email: 1
+                    }
+                }
+            ]
+
+        )
+
+        console.log(`generated response about channel is: ${JSON.stringify(channelDetails[0])}`);
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    channelDetails[0],
+                    "Channel details received!"
+                )
+            )
+    }
+)
 
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar,updateUserCoverImage }
+
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken, updatePassword, updateFullName, updateUserAvatar, updateUserCoverImage, getChannelInfo }
