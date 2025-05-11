@@ -1,5 +1,8 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../../constants/routes.dart';
 import 'sign_up.dart';
@@ -48,7 +51,8 @@ class _LoginPageState extends State<LoginPage> {
                       colors: [
                         Colors.pink.withOpacity(0.6), // Cyan/Turquoise
                         const Color(
-                            0x00FFFFFF), // Transparent (adjust if needed)
+                          0x00FFFFFF,
+                        ), // Transparent (adjust if needed)
                       ],
                       begin: const AlignmentDirectional(0.0, -1.0),
                       end: const AlignmentDirectional(0, 1.3),
@@ -78,8 +82,12 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          0.0,
+                          12.0,
+                          0.0,
+                          0.0,
+                        ),
                         child: Text(
                           'Login',
                           style: TextStyle(
@@ -90,18 +98,22 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
-                        child: Text(
-                          'Use the account below to sign in.',
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          0.0,
+                          4.0,
+                          0.0,
+                          0.0,
                         ),
+                        child: Text('Use the account below to sign in.'),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 32,
+                  ),
                   child: Column(
                     children: [
                       // Email or Username field
@@ -144,8 +156,9 @@ class _LoginPageState extends State<LoginPage> {
                       // Forgot Password button
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed(ForgotPassWordPage.route_name);
+                          Navigator.of(
+                            context,
+                          ).pushNamed(ForgotPassWordPage.route_name);
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -155,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Sign In button
                       TextButton.icon(
                         onPressed: () async {
-
+                          await AuthMethods.loginWithEmailAndPassword(emailController.text, passwordController.text, emailController.text, context);
                         },
                         icon: const Icon(Icons.login),
                         label: Container(
@@ -168,10 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: const Text(
                             'Sign In',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
                       ),
@@ -183,8 +193,9 @@ class _LoginPageState extends State<LoginPage> {
                           const Text('Don\'t have an account?'),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(SignupPage.route_name);
+                              Navigator.of(
+                                context,
+                              ).pushNamed(SignupPage.route_name);
                             },
                             child: const Text(
                               'Sign Up',

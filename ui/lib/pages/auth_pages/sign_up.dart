@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../constants/routes.dart';
 import 'login_page.dart';
-import 'verfify_email.dart';
 
 class SignupPage extends StatefulWidget {
   static String route_name = signup_route;

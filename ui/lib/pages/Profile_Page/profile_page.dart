@@ -7,7 +7,7 @@ import 'edit_phone.dart';
 
 class ProfilePage extends StatefulWidget {
   static const route_name=profile_route;
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();

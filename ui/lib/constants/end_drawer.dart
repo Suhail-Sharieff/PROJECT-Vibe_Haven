@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../Utils/button.dart';
 import '../pages/Profile_Page/profile_page.dart';

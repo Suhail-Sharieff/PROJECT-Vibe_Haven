@@ -37,8 +37,15 @@ dependencies:
   get: ^4.7.2
   fluttertoast: ^8.2.12
   google_fonts: ^6.2.1
+  another_flushbar: ^1.12.30
+  http: ^1.4.0
+  json_annotation: ^4.8.1
+
 
 dev_dependencies:
+  freezed: ^3.0.6
+  build_runner: ^2.4.15
+  json_serializable: ^6.7.1
   flutter_test:
     sdk: flutter
 

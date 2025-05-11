@@ -7,7 +7,7 @@ import '../../constants/routes.dart';
 // This class handles the Page to edit the Phone Section of the User Profile.
 class EditPhoneFormPage extends StatefulWidget {
   static const route_name=edit_user_ph_no;
-  const EditPhoneFormPage({Key? key}) : super(key: key);
+  const EditPhoneFormPage({super.key});
   @override
   EditPhoneFormPageState createState() {
     return EditPhoneFormPageState();

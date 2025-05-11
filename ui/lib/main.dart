@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: landing_route,
+      initialRoute: login_route,
       routes: routes,
     ));
   }

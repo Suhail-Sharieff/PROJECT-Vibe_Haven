@@ -11,7 +11,7 @@ import '../../constants/routes.dart';
 // This class handles the Page to edit the Name Section of the User Profile.
 class EditNameFormPage extends StatefulWidget {
   static const route_name=edit_user_name;
-  const EditNameFormPage({Key? key}) : super(key: key);
+  const EditNameFormPage({super.key});
 
   @override
   EditNameFormPageState createState() {
