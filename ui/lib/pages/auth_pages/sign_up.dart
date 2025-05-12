@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 import '../../constants/routes.dart';
 import 'login_page.dart';
 
@@ -14,6 +17,12 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final fullNameController = TextEditingController();
+
+  final ImagePicker _picker = ImagePicker();
+  XFile? _profileImage;
+  XFile? _coverImage;
+
   bool passwordVisible = false;
   @override
   void initState() {
@@ -25,6 +34,24 @@ class _SignupPageState extends State<SignupPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  Future<void> _pickProfileImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _profileImage = image;
+      });
+    }
+  }
+
+  Future<void> _pickDocumentImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _coverImage = image;
+      });
+    }
   }
 
   @override
@@ -39,15 +66,16 @@ class _SignupPageState extends State<SignupPage> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                    colors: [
-                      Colors.purple.withOpacity(0.6), // Cyan/Turquoise
-                      const Color(0x00FFFFFF),
-                    ],
-                    begin: const AlignmentDirectional(0.0, -1.0),
-                    end: const AlignmentDirectional(0, 1.3),
-                    stops: const [0.0, 1.0],
-                  )),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.purple.withOpacity(0.6), // Cyan/Turquoise
+                        const Color(0x00FFFFFF),
+                      ],
+                      begin: const AlignmentDirectional(0.0, -1.0),
+                      end: const AlignmentDirectional(0, 1.3),
+                      stops: const [0.0, 1.0],
+                    ),
+                  ),
                   width: double.infinity,
                   height: 300,
                   child: Column(
@@ -71,8 +99,12 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       const Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          0.0,
+                          12.0,
+                          0.0,
+                          0.0,
+                        ),
                         child: Text(
                           'Sign Up',
                           style: TextStyle(
@@ -83,21 +115,25 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       const Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          0.0,
+                          4.0,
+                          0.0,
+                          0.0,
+                        ),
                         child: Text(
                           'Create an account to sign in',
-                          style: TextStyle(
-                            letterSpacing: 0.0,
-                          ),
+                          style: TextStyle(letterSpacing: 0.0),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 32,
+                  ),
                   child: Column(
                     children: [
                       // Email or Username field
@@ -136,14 +172,76 @@ class _SignupPageState extends State<SignupPage> {
                           setState(() {});
                         },
                       ),
-                      const SizedBox(height: 10), // Space between fields
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: fullNameController,
+                        decoration: InputDecoration(
+                          icon: const Icon(Icons.drive_file_rename_outline),
+                          labelText: 'FullName',
+                        ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                      ), // Space between fields
                       // Forgot Password button
-                      SizedBox.fromSize(
-                        size: const Size(23, 23),
+                      SizedBox.fromSize(size: const Size(23, 23)),
+
+                      // Profile Image Picker
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _profileImage == null
+                                ? const Text('No avatar image selected.')
+                                : Image.file(
+                                  File(_profileImage!.path),
+                                  width: 100,
+                                  height: 100,
+                                ),
+                            ElevatedButton(
+                              onPressed: _pickProfileImage,
+                              child: const Text('Select Avatar Image'),
+                            ),
+                          ],
+                        ),
                       ),
+
+                      const SizedBox(height: 10),
+
+                      // Document Image Picker
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _coverImage == null
+                                ? const Text('No document image selected.')
+                                : Image.file(
+                                  File(_coverImage!.path),
+                                  width: 100,
+                                  height: 100,
+                                ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: _pickDocumentImage,
+                              child: const Text('Select Cover Image'),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       TextButton.icon(
                         onPressed: () async {
                           //go to email ver pg
+                          //signup
+                          await AuthMethods.registerUser(
+                            context,
+                            emailController.text,
+                            passwordController.text,
+                            emailController.text,
+                            fullNameController.text,
+                            _profileImage,
+                            _coverImage,
+                          );
                         },
                         icon: const Icon(Icons.login),
                         label: Container(
@@ -156,10 +254,7 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                           child: const Text(
                             'Sign Up',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
                       ),
@@ -171,8 +266,10 @@ class _SignupPageState extends State<SignupPage> {
                           const Text('Already Have an Accout?'),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(LoginPage.route_name);
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                LoginPage.route_name,
+                                (_) => false,
+                              );
                             },
                             child: const Text(
                               'Login',

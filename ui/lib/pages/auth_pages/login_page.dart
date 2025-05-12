@@ -195,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               Navigator.of(
                                 context,
-                              ).pushNamed(SignupPage.route_name);
+                              ).pushNamedAndRemoveUntil(SignupPage.route_name,(_)=>false);
                             },
                             child: const Text(
                               'Sign Up',
