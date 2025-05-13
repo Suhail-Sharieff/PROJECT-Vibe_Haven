@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:ui/pages/Profile_Page/edit_password.dart';
+import 'package:ui/pages/Subscriptions/subscription_page.dart';
+import 'package:ui/pages/shorts_page/shorts.dart';
 
 import '../landing_page.dart';
 import '../pages/Home_page/home_page.dart';
-import '../pages/Leaderboard_page/leader_board.dart';
 import '../pages/Profile_Page/edit_name.dart';
 import '../pages/Profile_Page/edit_phone.dart';
 import '../pages/Profile_Page/profile_page.dart';
@@ -23,13 +24,15 @@ const forgot_password_route='forgot_password/';
 //-------after login pages
 const landing_route='/landing/';
 const home_route='/home/';
-const discover_route='/discover/';
-const leader_board_route='/leader_board/';
 const profile_route='/profile/';
 const edit_user_name='/edit_user_name/';
 const edit_user_ph_no='/edit_user_ph_no/';
 const edit_password='/edit_password/';
 
+const shorts_route='/shorts/';
+const subscriptions_route='/subscriptions/';
+const content_create_route='/content_create/';
+const channel_details='/channel_details/';
 
 
 
@@ -40,9 +43,10 @@ final Map<String, WidgetBuilder> routes = {
   SignupPage.route_name:(_)=>const SignupPage(),
   VerifyEmailPage.route_name:(_)=>const VerifyEmailPage(),
   ForgotPassWordPage.route_name:(_)=>const ForgotPassWordPage(),
-  LeaderBoardPage.route_name:(_)=>const LeaderBoardPage(),
   ProfilePage.route_name:(_)=>const ProfilePage(),
   EditNameFormPage.route_name:(_)=>const EditNameFormPage(),
   EditPhoneFormPage.route_name:(_)=>const EditPhoneFormPage(),
   EditPasswordPage.route_name:(_)=>EditPasswordPage(),
+  ShortsPage.route_name:(_)=>const ShortsPage(),
+  SubscriptionPage.route_name:(_)=>const SubscriptionPage(),
 };
