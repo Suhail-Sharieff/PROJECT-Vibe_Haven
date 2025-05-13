@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../../constants/routes.dart';
+import '../../models/User/user.dart';
 import 'sign_up.dart';
 import 'forgot_password.dart';
 
@@ -20,6 +23,8 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool passwordVisible = false;
+
+  final AuthController authController= Get.find();
 
   @override
   void initState() {
@@ -168,7 +173,10 @@ class _LoginPageState extends State<LoginPage> {
                       // Sign In button
                       TextButton.icon(
                         onPressed: () async {
-                          await AuthMethods.loginWithEmailAndPassword(emailController.text, passwordController.text, emailController.text, context);
+                          User? user=await authController.loginWithEmailAndPassword(emailController.text, passwordController.text, emailController.text, context);
+                          if(!(user==null)){
+                              Navigator.of(context).pushReplacementNamed(home_route);
+                          }
                         },
                         icon: const Icon(Icons.login),
                         label: Container(
@@ -195,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               Navigator.of(
                                 context,
-                              ).pushNamedAndRemoveUntil(SignupPage.route_name,(_)=>false);
+                              ).pushReplacementNamed(SignupPage.route_name);
                             },
                             child: const Text(
                               'Sign Up',

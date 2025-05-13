@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:ui/Utils/show_toast.dart';
 import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 import '../../constants/routes.dart';
 import 'login_page.dart';
@@ -18,6 +21,7 @@ class _SignupPageState extends State<SignupPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fullNameController = TextEditingController();
+  final AuthController authController=Get.find();
 
   final ImagePicker _picker = ImagePicker();
   XFile? _profileImage;
@@ -233,7 +237,7 @@ class _SignupPageState extends State<SignupPage> {
                         onPressed: () async {
                           //go to email ver pg
                           //signup
-                          await AuthMethods.registerUser(
+                          var regSuccess=await authController.registerUser(
                             context,
                             emailController.text,
                             passwordController.text,
@@ -242,6 +246,10 @@ class _SignupPageState extends State<SignupPage> {
                             _profileImage,
                             _coverImage,
                           );
+                          if(regSuccess){
+                            showToast("Pls login!", Colors.blue);
+                            Navigator.of(context).pushReplacementNamed(login_route);
+                          }
                         },
                         icon: const Icon(Icons.login),
                         label: Container(
@@ -266,9 +274,8 @@ class _SignupPageState extends State<SignupPage> {
                           const Text('Already Have an Accout?'),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamedAndRemoveUntil(
+                              Navigator.of(context).pushReplacementNamed(
                                 LoginPage.route_name,
-                                (_) => false,
                               );
                             },
                             child: const Text(

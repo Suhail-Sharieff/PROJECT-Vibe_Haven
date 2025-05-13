@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:ui/constants/routes.dart';
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../Utils/button.dart';
+import '../controllers/auth_controllers/auth_methods.dart';
 import '../pages/Profile_Page/profile_page.dart';
 import '../pages/Settings/settings_page.dart';
-import 'images_names.dart';
 
 Widget get_end_drawer(BuildContext context) {
   final Map<String, Widget> routeMap = {
     'Profile': const ProfilePage(),
     'Settings': const SettingsPage(),
   };
+  final AuthController authController =Get.find();
+  final user=authController.user;
   return SafeArea(
     child: Drawer(
       elevation: 16.0,
@@ -33,14 +39,14 @@ Widget get_end_drawer(BuildContext context) {
                     children: [
                       Expanded(
                         child: Text(
-                          "Username here",
+                          user.userName,
                           style: const TextStyle(
                               fontFamily: 'Inter', fontSize: 18),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       CircleAvatar(
-                        child: MyImages.user_image, // Adjust radius as needed
+                        child: Image.network(user.avatar), // Adjust radius as needed
                       ),
                     ],
                   ),
@@ -66,6 +72,8 @@ Widget get_end_drawer(BuildContext context) {
               isLoading: false,
               onPressed: () async {
                 //logout fn
+                bool logoutSuccess=await authController.logout(context);
+                if(logoutSuccess)Navigator.of(context).pushReplacementNamed(login_route);
               },
               btnColor: Colors.red,
             ),

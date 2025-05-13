@@ -10,7 +10,6 @@ import '../pages/Profile_Page/profile_page.dart';
 import '../pages/auth_pages/forgot_password.dart';
 import '../pages/auth_pages/login_page.dart';
 import '../pages/auth_pages/sign_up.dart';
-import '../pages/auth_pages/splash_screen.dart';
 import '../pages/auth_pages/verfify_email.dart';
 
 const splash_route='/splash/';
@@ -33,7 +32,6 @@ const edit_user_ph_no='/edit_user_ph_no/';
 
 
 final Map<String, WidgetBuilder> routes = {
-  SplashScreen.route_name:(_)=>const SplashScreen(home_route: home_route,),
   Landing_page.route_name:(_)=>const Landing_page(),
   HomePage.route_name:(_)=>const HomePage(),
   LoginPage.route_name:(_)=>const LoginPage(),

@@ -1,6 +1,10 @@
+
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import 'constants/routes.dart';
 import 'controllers/settings_controller/setting_controller.dart';
@@ -10,7 +14,7 @@ void main() async {
 
   // Ensure SettingsController is initialized before running the app
   Get.put(SettingsController());
-
+  Get.put(AuthController());
   runApp(const MyApp());
 }
 

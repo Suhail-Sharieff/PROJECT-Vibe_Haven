@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../../constants/appbar.dart';
 import '../../constants/end_drawer.dart';
@@ -15,15 +20,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // List of feature items with icon and label
   final List<Map<String, dynamic>> features = [
-    {
-      'icon': Icon(Icons.add),
-      'label': 'Recycle',
-      'onTap': () {
-        // TODO: Navigate or perform action for Recycle
-      },
+    // {
+    //   'icon': Icon(Icons.add),
+    //   'label': 'Recycle',
+    //   'onTap': () {
+    //     // TODO: Navigate or perform action for Recycle
+    //   },
       //and many more
-    }
+    // }
   ];
+
+  final AuthController authController=Get.find();
 
   @override
   Widget build(BuildContext context) {

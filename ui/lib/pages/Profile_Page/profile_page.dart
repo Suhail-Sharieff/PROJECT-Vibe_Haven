@@ -1,8 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-import '../../constants/images_names.dart';
 import '../../constants/routes.dart';
+import '../../controllers/auth_controllers/auth_methods.dart';
+import '../../models/User/user.dart';
 import 'edit_phone.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,9 +17,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
+  final AuthController contr=Get.find();
+  
   @override
   Widget build(BuildContext context) {
+    final User user=contr.user;
     return Scaffold(
       // Using an AppBar for a consistent header
       appBar: AppBar(
@@ -32,20 +37,46 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Profile picture icon with edit capability
-            GestureDetector(
-              onTap: () {
-                // TODO: Navigate to profile picture editing page
-              },
-              child: CircleAvatar(
-                radius: 50,
-                child: MyImages.user_image,
-              ),
+            Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(user.coverImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -50,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to edit avatar
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(user.avatar),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 60), // Leave space for the avatar
+                // Other widgets go here
+              ],
             ),
+
             const SizedBox(height: 20),
             // Username display with edit option
             buildUserInfoDisplay(
-              label: "Username",
-              value:  "No username set",
+              label: "Full name",
+              value:  user.fullName,
               onEdit: () {
                 // TODO: Navigate to username editing page
                 Navigator.of(context).pushNamed(edit_user_name);
@@ -55,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Email display without edit option
             buildUserInfoDisplay(
               label: "Email",
-              value:  "No email set",
+              value:  user.email,
               onEdit: () {}, // This callback won't be used since edit is hidden
               showEdit: false,
             ),

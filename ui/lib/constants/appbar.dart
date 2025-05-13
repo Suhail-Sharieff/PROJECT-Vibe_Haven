@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
-import 'images_names.dart';
+import '../models/User/user.dart';
 
 
 AppBar get_app_bar(String title, bool isCenter) {
+  final AuthController contr=Get.find();
+  final User user=contr.user;
   return AppBar(
     title: Text(
       title,
@@ -23,7 +28,7 @@ AppBar get_app_bar(String title, bool isCenter) {
             },
             icon: CircleAvatar(
               maxRadius: 25,
-              child: MyImages.user_image,
+              child:Image.network(user.avatar),
             ));
       }),
       SizedBox.fromSize(
