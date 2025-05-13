@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -9,7 +8,7 @@ import '../../models/User/user.dart';
 import 'edit_phone.dart';
 
 class ProfilePage extends StatefulWidget {
-  static const route_name=profile_route;
+  static const route_name = profile_route;
   const ProfilePage({super.key});
 
   @override
@@ -17,11 +16,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final AuthController contr=Get.find();
-  
+  final AuthController contr = Get.find();
+
   @override
   Widget build(BuildContext context) {
-    final User user=contr.user.value;
+    final User user = contr.user.value;
     return Scaffold(
       // Using an AppBar for a consistent header
       appBar: AppBar(
@@ -76,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Username display with edit option
             buildUserInfoDisplay(
               label: "Full name",
-              value:  user.fullName,
+              value: user.fullName,
               onEdit: () {
                 // TODO: Navigate to username editing page
                 Navigator.of(context).pushNamed(edit_user_name);
@@ -86,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Email display without edit option
             buildUserInfoDisplay(
               label: "Email",
-              value:  user.email,
+              value: user.email,
               onEdit: () {}, // This callback won't be used since edit is hidden
               showEdit: false,
             ),
@@ -94,13 +93,27 @@ class _ProfilePageState extends State<ProfilePage> {
             // Phone number display with edit option
             buildUserInfoDisplay(
               label: "Phone",
-              value:  "+91 12345 6789",
+              value: "+91 12345 6789",
               onEdit: () {
                 // TODO: Navigate to phone number editing page
                 Navigator.of(context).pushNamed(EditPhoneFormPage.route_name);
               },
             ),
-            buildUserInfoDisplay(label: 'Verfication Status', value: 'Verified', onEdit: (){},showEdit: false),
+            buildUserInfoDisplay(
+              label: 'Verfication Status',
+              value: 'Verified',
+              onEdit: () {},
+              showEdit: false,
+            ),
+            const SizedBox(height: 10),
+            buildUserInfoDisplay(
+              label: 'Password',
+              value: '*********',
+              onEdit: () {
+                Navigator.of(context).pushNamed(edit_password);
+              },
+              showEdit: true,
+            ),
           ],
         ),
       ),
@@ -117,21 +130,18 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            )),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
+        ),
         const SizedBox(height: 5),
         Container(
           decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.grey,
-                width: 1,
-              ),
-            ),
+            border: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
           ),
           child: Row(
             children: [

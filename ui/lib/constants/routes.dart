@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:ui/pages/Profile_Page/edit_password.dart';
 
 import '../landing_page.dart';
 import '../pages/Home_page/home_page.dart';
@@ -27,6 +28,7 @@ const leader_board_route='/leader_board/';
 const profile_route='/profile/';
 const edit_user_name='/edit_user_name/';
 const edit_user_ph_no='/edit_user_ph_no/';
+const edit_password='/edit_password/';
 
 
 
@@ -42,4 +44,5 @@ final Map<String, WidgetBuilder> routes = {
   ProfilePage.route_name:(_)=>const ProfilePage(),
   EditNameFormPage.route_name:(_)=>const EditNameFormPage(),
   EditPhoneFormPage.route_name:(_)=>const EditPhoneFormPage(),
+  EditPasswordPage.route_name:(_)=>EditPasswordPage(),
 };
