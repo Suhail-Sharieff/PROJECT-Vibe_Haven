@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () async {
                           User? user=await authController.loginWithEmailAndPassword(emailController.text, passwordController.text, emailController.text, context);
                           if(!(user==null)){
-                              Navigator.of(context).pushReplacementNamed(home_route);
+                              Navigator.of(context).pushReplacementNamed(landing_route);
                           }
                         },
                         icon: const Icon(Icons.login),

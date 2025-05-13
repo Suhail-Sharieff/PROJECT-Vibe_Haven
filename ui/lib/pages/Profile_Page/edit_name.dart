@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../../Utils/button.dart';
 import '../../Utils/show_toast.dart';
@@ -33,6 +34,8 @@ class EditNameFormPageState extends State<EditNameFormPage> {
 
   Future<void> updateUserValue(String name) async{
     // await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
+    final AuthController cont=Get.find();
+    await cont.updateFullName(context, name);
   }
 
   @override
@@ -112,8 +115,8 @@ class EditNameFormPageState extends State<EditNameFormPage> {
                               isLoading=true;
                             });
                             if(mounted){
-                              showToast('Update Success !', Colors.green);
-                              Navigator.of(context).pushNamedAndRemoveUntil(landing_route, (_)=>false);
+                              // showToast('Update Success !', Colors.green);
+                              Navigator.of(context).pushNamedAndRemoveUntil(landing_route,(_)=>false);
                             }
                           }
                         }, btnColor: Colors.green),

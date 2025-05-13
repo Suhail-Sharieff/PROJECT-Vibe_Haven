@@ -43,7 +43,8 @@ class _Landing_pageState extends State<Landing_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Landing page"),),
+      body: pages[currPageIdx],
+      bottomNavigationBar: get_nav_bar(currPageIdx, onChange),
     );
   }
 }

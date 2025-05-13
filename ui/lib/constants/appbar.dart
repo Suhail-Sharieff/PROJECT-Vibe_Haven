@@ -8,7 +8,7 @@ import '../models/User/user.dart';
 
 AppBar get_app_bar(String title, bool isCenter) {
   final AuthController contr=Get.find();
-  final User user=contr.user;
+  final User user=contr.user.value;
   return AppBar(
     title: Text(
       title,

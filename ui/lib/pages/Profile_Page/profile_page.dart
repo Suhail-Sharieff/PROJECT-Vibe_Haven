@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   
   @override
   Widget build(BuildContext context) {
-    final User user=contr.user;
+    final User user=contr.user.value;
     return Scaffold(
       // Using an AppBar for a consistent header
       appBar: AppBar(

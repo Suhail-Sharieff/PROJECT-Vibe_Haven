@@ -14,7 +14,7 @@ import 'package:ui/network/uri.constants.dart';
 
 class AuthController extends GetxController{
 
-  late final User user;
+  late final Rx<User> user;
   String my_ref_token="";
 
   // static const headers={
@@ -42,7 +42,7 @@ class AuthController extends GetxController{
       var user = User.fromJson(json);
       // log('Logged in user: ${user.toString()}');
 
-      this.user=User.fromJson(json);
+      this.user=User.fromJson(json).obs;
 
 
       //save user
@@ -94,6 +94,51 @@ class AuthController extends GetxController{
   }
 
 
+  Future<bool>updatePassword(BuildContext context,String oldPassword,String newPassword) async {
+    try {
+      var url=Uri.http(main_uri,'/api/users/updatePassword');
+      // log('logout out using ref token: $my_ref_token');
+      var res=await http.post(url,
+          body: {
+            'oldPassword':oldPassword,
+            'newPassword':newPassword,
+          },
+          headers:
+      {
+        'authorization': 'Bearer $my_ref_token'
+      });
+
+      if(ResponseHandler.is_good_response(res, context)){
+        user.value=user.value.copyWith(password: newPassword);
+        return true;
+      }
+    } on Exception catch (e) {
+      HttpExceptionHandler.handle(e, context );
+    }
+    return false;
+  }
+
+
+  Future<bool>updateFullName(BuildContext context,String newFullName) async {
+    try {
+      var url=Uri.http(main_uri,'/api/users/updateFullName');
+      // log('logout out using ref token: $my_ref_token');
+      var res=await http.post(url,
+          body: {'newFullName':newFullName},
+          headers:
+      {
+        'authorization': 'Bearer $my_ref_token'
+      });
+
+      if(ResponseHandler.is_good_response(res, context)){
+        user.value=user.value.copyWith(fullName: newFullName);
+        return true;
+      }
+    } on Exception catch (e) {
+      HttpExceptionHandler.handle(e, context );
+    }
+    return false;
+  }
 
 
   Future<bool> registerUser(BuildContext context,

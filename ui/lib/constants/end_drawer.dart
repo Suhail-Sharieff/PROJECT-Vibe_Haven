@@ -5,7 +5,6 @@ import 'package:ui/constants/routes.dart';
 import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 
 import '../Utils/button.dart';
-import '../controllers/auth_controllers/auth_methods.dart';
 import '../pages/Profile_Page/profile_page.dart';
 import '../pages/Settings/settings_page.dart';
 
@@ -15,7 +14,7 @@ Widget get_end_drawer(BuildContext context) {
     'Settings': const SettingsPage(),
   };
   final AuthController authController =Get.find();
-  final user=authController.user;
+  final user=authController.user.value;
   return SafeArea(
     child: Drawer(
       elevation: 16.0,
