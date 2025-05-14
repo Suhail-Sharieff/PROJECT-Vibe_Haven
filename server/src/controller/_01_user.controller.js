@@ -637,7 +637,7 @@ const getWatchHistory = asyncHandler(//make sure u pass verifyJWT as middleware 
                         localField: "watchHistory",
                         foreignField: "_id",
                         as: "watchHistory",
-                        pipeline: [
+                        pipeline: [//this pipeline will retrieve the details of owner of each video id
                             {
                                 $lookup: {
                                     from: "users",

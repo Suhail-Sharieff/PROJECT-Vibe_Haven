@@ -8,10 +8,10 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     console.log("Matching JWT tokens...");
     console.log("Fetching current token...");
 
-    const currJwtToken = req.cookies?.accessToken || 
+    const currJwtToken = req.cookies?.refreshToken || 
         req.header("authorization")?.replace(/Bearer\s*/i, "").trim();
 
-    // console.log(`Cookies received: ${JSON.stringify(req.cookies)}, headers received: ${JSON.stringify(req.headers)}`);
+    console.log(`Cookies received: ${JSON.stringify(req.cookies)}, headers received: ${JSON.stringify(req.headers)}`);
 
     if (!currJwtToken) {
         console.error("No token found in cookies or headers.");
@@ -23,7 +23,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
 
     let decodedToken;
     try {
-        decodedToken = jwt.verify(currJwtToken, process.env.ACCESS_TOKEN_SECRET);
+        decodedToken = jwt.verify(currJwtToken, process.env.REFRESH_TOKEN_SECRET);
     } catch (error) {
         console.error("Error verifying token:", error.message);
         throw new ApiError(401, "Invalid or expired token.");
