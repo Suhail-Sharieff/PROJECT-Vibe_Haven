@@ -2,7 +2,7 @@ import "mongoose"
 import { asyncHandler } from "../Utils/_03_asyncHandler.utils.js"
 import { ApiError } from "../Utils/_04_Api_Error.utils.js";
 import { Video } from "../models/_02_video.model.js";
-import { uploadOnCloudinary } from "../Utils/_06_cloudinary.file_uploading.util.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../Utils/_06_cloudinary.file_uploading.util.js";
 import { ApiResponse } from "../Utils/_05_Api_Response.utils.js";
 import { User } from "../models/_01_user.model.js";
 /*const videoSchema = new Schema(
@@ -138,8 +138,41 @@ const createVideo = asyncHandler(
             );
     }
 )
+const deleteVideo = asyncHandler(
+    async (req, res) => {
+
+        const body = req.body
+        const { videoURL, thumbNailURL } = body;
+
+        if (!videoURL || !thumbNailURL) {
+            throw new ApiError(400, "Pls provide videoURL or thumbNailURL!")
+        }
+
+        var publicId = videoURL
+            ? videoURL.split('/').slice(-1)[0].split('.')[0]
+            : null;
+
+        await deleteFromCloudinary(publicId,"video")
+
+        publicId = thumbNailURL
+            ? thumbNailURL.split('/').slice(-1)[0].split('.')[0]
+            : null;
+
+        await deleteFromCloudinary(publicId,"thumbnail")
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    "Video deleted scessfully!"
+                )
+            )
+
+    }
+)
 
 
 export {
-    createVideo,
+    createVideo, deleteVideo
 }

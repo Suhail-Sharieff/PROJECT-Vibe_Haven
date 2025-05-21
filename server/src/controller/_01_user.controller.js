@@ -537,7 +537,7 @@ const getChannelInfo = asyncHandler(
 
             [
                 //stage 1: fetch user from userName
-                { $match: { userName: "suhail" } },
+                { $match: { userName:userName } },
 
                 //stage 2: get nSubscribers from subscriptions collection
                 {
@@ -628,7 +628,7 @@ const getWatchHistory = asyncHandler(//make sure u pass verifyJWT as middleware 
             [
                 {
                     $match: {
-                        _id: _id
+                        _id: new mongoose.Types.ObjectId(_id)
                     }
                 },
                 {
