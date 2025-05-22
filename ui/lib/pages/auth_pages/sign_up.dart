@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:ui/Utils/show_toast.dart';
 import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 import '../../constants/routes.dart';
