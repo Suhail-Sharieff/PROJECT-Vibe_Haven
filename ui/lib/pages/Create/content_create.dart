@@ -19,7 +19,7 @@ class ContentCreatePage extends StatefulWidget {
 
 class _ContentCreatePageState extends State<ContentCreatePage> {
   int _currentStep = 0;
-  bool loading=false;
+  bool loading = false;
   File? _videoFile;
   File? _thumbnailFile;
   VideoPlayerController? _videoController;
@@ -29,28 +29,32 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
   final TextEditingController _tagController = TextEditingController();
   List<String> _hashtags = [];
 
-  final VideoController vid_controller=Get.put(VideoController());
+  final VideoController vid_controller = Get.put(VideoController());
 
   // Function to pick a video file
   Future<void> _pickVideo() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+    );
     if (result != null) {
       setState(() {
         _videoFile = File(result.files.single.path!);
         _videoController = VideoPlayerController.file(_videoFile!)
-          ..initialize().then((_) {
-            // Ensure the first frame is displayed and the video is ready to play.
-            setState(() {});
-          }).catchError((error) {
-            // Handle video initialization errors
-            log('Error initializing video: $error');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to load video: $error')),
-            );
-            _videoFile = null; // Clear the file if it fails to load
-            _videoController?.dispose(); // Dispose the controller
-            _videoController = null;
-          });
+          ..initialize()
+              .then((_) {
+                // Ensure the first frame is displayed and the video is ready to play.
+                setState(() {});
+              })
+              .catchError((error) {
+                // Handle video initialization errors
+                log('Error initializing video: $error');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to load video: $error')),
+                );
+                _videoFile = null; // Clear the file if it fails to load
+                _videoController?.dispose(); // Dispose the controller
+                _videoController = null;
+              });
       });
     }
   }
@@ -84,19 +88,28 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
   }
 
   // Function to handle form submission
-  Future<void> _submit() async{
-    if (_formKey.currentState!.validate() && _videoFile != null && _thumbnailFile != null) {
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate() &&
+        _videoFile != null &&
+        _thumbnailFile != null) {
       // TODO: Implement actual upload logic here
       setState(() {
-        loading=true;
+        loading = true;
       });
-      bool success=await vid_controller.publishVideo(context, _videoFile, _thumbnailFile,_hashtags,_titleController.text,_descriptionController.text);
+      bool success = await vid_controller.publishVideo(
+        context,
+        _videoFile,
+        _thumbnailFile,
+        _hashtags,
+        _titleController.text,
+        _descriptionController.text,
+      );
       setState(() {
-        loading=false;
+        loading = false;
       });
-      if(!success){
+      if (!success) {
         showErrorMsg("Failed to upload!", context);
-      }else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Content uploaded!)"),
@@ -120,7 +133,9 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please complete all steps and provide a video and thumbnail."),
+          content: Text(
+            "Please complete all steps and provide a video and thumbnail.",
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -142,16 +157,13 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
       appBar: AppBar(
         title: const Text(
           "Create Content",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.green, Colors.red,Colors.blue],
+              colors: [Colors.green, Colors.red, Colors.blue],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -172,7 +184,11 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
             // Validate current step before moving to the next
             if (_currentStep == 2 && !_formKey.currentState!.validate()) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please fill in all required fields in Details.')),
+                const SnackBar(
+                  content: Text(
+                    'Please fill in all required fields in Details.',
+                  ),
+                ),
               );
               return; // Stay on the current step if validation fails
             }
@@ -209,28 +225,42 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                     child: ElevatedButton(
                       onPressed: details.onStepContinue,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple, // Button background color
+                        backgroundColor:
+                            Colors.deepPurple, // Button background color
                         foregroundColor: Colors.white, // Text color
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), // Rounded corners
+                          borderRadius: BorderRadius.circular(
+                            12,
+                          ), // Rounded corners
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 5, // Shadow
                       ),
-                      child: _currentStep == 3?(loading?CircularProgressIndicator(backgroundColor: Colors.white,):Text('Publish')):Text('Next'),
+                      child:
+                          _currentStep == 3
+                              ? (loading
+                                  ? CircularProgressIndicator(
+                                    backgroundColor: Colors.white,
+                                  )
+                                  : Text('Publish'))
+                              : Text('Next'),
                     ),
                   ),
-                  if (_currentStep > 0)
-                    const SizedBox(width: 12),
+                  if (_currentStep > 0) const SizedBox(width: 12),
                   if (_currentStep > 0)
                     Expanded(
                       child: OutlinedButton(
                         onPressed: details.onStepCancel,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.deepPurple, // Text color
-                          side: const BorderSide(color: Colors.deepPurple, width: 2), // Border color
+                          side: const BorderSide(
+                            color: Colors.deepPurple,
+                            width: 2,
+                          ), // Border color
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // Rounded corners
+                            borderRadius: BorderRadius.circular(
+                              12,
+                            ), // Rounded corners
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -250,7 +280,9 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
               ),
               content: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -259,58 +291,74 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                     children: [
                       _videoFile == null
                           ? Column(
-                        children: [
-                          Icon(Icons.videocam, size: 80, color: Colors.deepPurple.shade200),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "No video selected",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton.icon(
-                            onPressed: _pickVideo,
-                            icon: const Icon(Icons.upload_file),
-                            label: const Text("Pick Video"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade400,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                            ),
-                          ),
-                        ],
-                      )
-                          : Column(
-                        children: [
-                          _videoController!.value.isInitialized
-                              ? AspectRatio(
-                            aspectRatio: _videoController!.value.aspectRatio,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: VideoPlayer(_videoController!),
-                            ),
+                            children: [
+                              Icon(
+                                Icons.videocam,
+                                size: 80,
+                                color: Colors.deepPurple.shade200,
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "No video selected",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton.icon(
+                                onPressed: _pickVideo,
+                                icon: const Icon(Icons.upload_file),
+                                label: const Text("Pick Video"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple.shade400,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
                           )
-                              : const CircularProgressIndicator(), // Show loading indicator
-                          const SizedBox(height: 20),
-                          ElevatedButton.icon(
-                            onPressed: _pickVideo,
-                            icon: const Icon(Icons.replay),
-                            label: const Text("Change Video"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade400,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                            ),
+                          : Column(
+                            children: [
+                              _videoController!.value.isInitialized
+                                  ? AspectRatio(
+                                    aspectRatio:
+                                        _videoController!.value.aspectRatio,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: VideoPlayer(_videoController!),
+                                    ),
+                                  )
+                                  : const CircularProgressIndicator(), // Show loading indicator
+                              const SizedBox(height: 20),
+                              ElevatedButton.icon(
+                                onPressed: _pickVideo,
+                                icon: const Icon(Icons.replay),
+                                label: const Text("Change Video"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple.shade400,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
               ),
               isActive: _currentStep >= 0,
-              state: _videoFile != null ? StepState.complete : StepState.indexed,
+              state:
+                  _videoFile != null ? StepState.complete : StepState.indexed,
             ),
 
             // Step 2: Thumbnail Selection
@@ -321,7 +369,9 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
               ),
               content: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -330,57 +380,74 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                     children: [
                       _thumbnailFile == null
                           ? Column(
-                        children: [
-                          Icon(Icons.image, size: 80, color: Colors.deepPurple.shade200),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "No thumbnail selected",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton.icon(
-                            onPressed: _pickThumbnail,
-                            icon: const Icon(Icons.add_photo_alternate),
-                            label: const Text("Pick Thumbnail"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade400,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                            ),
-                          ),
-                        ],
-                      )
+                            children: [
+                              Icon(
+                                Icons.image,
+                                size: 80,
+                                color: Colors.deepPurple.shade200,
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "No thumbnail selected",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton.icon(
+                                onPressed: _pickThumbnail,
+                                icon: const Icon(Icons.add_photo_alternate),
+                                label: const Text("Pick Thumbnail"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple.shade400,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                           : Column(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              _thumbnailFile!,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  _thumbnailFile!,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton.icon(
+                                onPressed: _pickThumbnail,
+                                icon: const Icon(Icons.refresh),
+                                label: const Text("Change Thumbnail"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurple.shade400,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                          ElevatedButton.icon(
-                            onPressed: _pickThumbnail,
-                            icon: const Icon(Icons.refresh),
-                            label: const Text("Change Thumbnail"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade400,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
               ),
               isActive: _currentStep >= 1,
-              state: _thumbnailFile != null ? StepState.complete : StepState.indexed,
+              state:
+                  _thumbnailFile != null
+                      ? StepState.complete
+                      : StepState.indexed,
             ),
 
             // Step 3: Details Input
@@ -391,7 +458,9 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
               ),
               content: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -403,15 +472,23 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                           controller: _titleController,
                           decoration: InputDecoration(
                             labelText: 'Title',
-                            hintText: 'Enter a compelling title for your content',
+                            hintText:
+                                'Enter a compelling title for your content',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            prefixIcon: const Icon(Icons.title, color: Colors.deepPurple),
+                            prefixIcon: const Icon(
+                              Icons.title,
+                              color: Colors.deepPurple,
+                            ),
                             filled: true,
                             fillColor: Colors.deepPurple.shade50,
                           ),
-                          validator: (value) => value == null || value.isEmpty ? 'Title cannot be empty' : null,
+                          validator:
+                              (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Title cannot be empty'
+                                      : null,
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
@@ -422,7 +499,10 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            prefixIcon: const Icon(Icons.description, color: Colors.deepPurple),
+                            prefixIcon: const Icon(
+                              Icons.description,
+                              color: Colors.deepPurple,
+                            ),
                             filled: true,
                             fillColor: Colors.deepPurple.shade50,
                           ),
@@ -434,7 +514,10 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                 ),
               ),
               isActive: _currentStep >= 2,
-              state: _formKey.currentState?.validate() == true ? StepState.complete : StepState.indexed,
+              state:
+                  _formKey.currentState?.validate() == true
+                      ? StepState.complete
+                      : StepState.indexed,
             ),
 
             // Step 4: Hashtags
@@ -445,7 +528,9 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
               ),
               content: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -460,9 +545,15 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          prefixIcon: const Icon(Icons.tag, color: Colors.deepPurple),
+                          prefixIcon: const Icon(
+                            Icons.tag,
+                            color: Colors.deepPurple,
+                          ),
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.add_circle, color: Colors.deepPurple),
+                            icon: const Icon(
+                              Icons.add_circle,
+                              color: Colors.deepPurple,
+                            ),
                             onPressed: () => _addTag(_tagController.text),
                           ),
                           filled: true,
@@ -476,19 +567,29 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                         child: Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children: _hashtags
-                              .map((tag) => Chip(
-                            label: Text(tag),
-                            onDeleted: () => _removeTag(tag),
-                            backgroundColor: Colors.deepPurple.shade100,
-                            labelStyle: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w500),
-                            deleteIconColor: Colors.deepPurple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: const BorderSide(color: Colors.deepPurple, width: 1),
-                            ),
-                          ))
-                              .toList(),
+                          children:
+                              _hashtags
+                                  .map(
+                                    (tag) => Chip(
+                                      label: Text(tag),
+                                      onDeleted: () => _removeTag(tag),
+                                      backgroundColor:
+                                          Colors.deepPurple.shade100,
+                                      labelStyle: const TextStyle(
+                                        color: Colors.deepPurple,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      deleteIconColor: Colors.deepPurple,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        side: const BorderSide(
+                                          color: Colors.deepPurple,
+                                          width: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ),
                     ],
@@ -496,7 +597,8 @@ class _ContentCreatePageState extends State<ContentCreatePage> {
                 ),
               ),
               isActive: _currentStep >= 3,
-              state: _hashtags.isNotEmpty ? StepState.complete : StepState.indexed,
+              state:
+                  _hashtags.isNotEmpty ? StepState.complete : StepState.indexed,
             ),
           ],
         ),
