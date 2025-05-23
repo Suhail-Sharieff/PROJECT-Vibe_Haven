@@ -1,7 +1,7 @@
 import { Router } from "express"
 import {upload} from "../middleware/_01_multer.middle_ware.js"
 import { verifyJWT } from "../middleware/_02_auth.middleware.js";
-import { createVideo, deleteVideo } from "../controller/_02_video.controller.js";
+import { addVideoToWatchHistory, createVideo, deleteVideo } from "../controller/_02_video.controller.js";
 
 const videoRouter=Router()
 videoRouter.use(verifyJWT)
@@ -30,5 +30,10 @@ videoRouter
 videoRouter
 .route('/deleteVideo')
 .delete(deleteVideo);
+
+
+videoRouter
+.route('/addVideoToWatchHistory')
+.post(addVideoToWatchHistory)
 
 export {videoRouter}

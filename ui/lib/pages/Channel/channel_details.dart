@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -5,6 +7,7 @@ import 'package:ui/constants/routes.dart';
 import 'package:ui/controllers/auth_controllers/auth_methods.dart';
 import 'package:ui/controllers/channel_controller/channel_controller.dart';
 import 'package:ui/models/Channel/Channel.dart';
+import 'package:ui/models/Video/video.model.dart';
 
 import '../../models/User/user.dart';
 
@@ -132,6 +135,90 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
                 ),
 
                 const SizedBox(height: 32),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Your watch history!"),
+                ),
+
+                const SizedBox(height: 32),
+
+                FutureBuilder<List<Video>>(
+                  future: controller.getUserWatchistory(context),
+                  builder: (_, snap) {
+                    if (snap.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snap.hasData || snap.data!.isEmpty) {
+                      return const Center(child: Text('No videos watched yet!'));
+                    }
+
+                    List<Video> videos = snap.data!;
+                    return ListView.builder(
+                      itemCount: videos.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final video = videos[index];
+                        log(video.toString());
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                   video.thumbNail!,
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: NetworkImage(video.owner?.avatar ?? ''),
+                                    onBackgroundImageError: (_, __) {},
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          video.title ?? 'Untitled',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          video.owner?.fullName ?? 'Unknown',
+                                          style: const TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              const Divider(),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           );

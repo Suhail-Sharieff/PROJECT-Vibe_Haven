@@ -11,7 +11,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     const currJwtToken = req.cookies?.refreshToken || 
         req.header("authorization")?.replace(/Bearer\s*/i, "").trim();
 
-    // console.log(`Cookies received: ${JSON.stringify(req.cookies)}, headers received: ${JSON.stringify(req.headers)}`);
+     console.log(`Cookies received: ${JSON.stringify(req.cookies)}, headers received: ${JSON.stringify(req.headers)}`);
 
     if (!currJwtToken) {
         console.error("No token found in cookies or headers.");

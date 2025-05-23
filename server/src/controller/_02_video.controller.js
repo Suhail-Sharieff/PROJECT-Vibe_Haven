@@ -173,6 +173,41 @@ const deleteVideo = asyncHandler(
 )
 
 
+const addVideoToWatchHistory=asyncHandler
+(
+    async(req,res)=>{
+
+        const user=req.user;
+
+        const {videoId}=req.body;
+
+        if(!videoId) throw new ApiError(400,"Pls provide videoId!")
+
+        const vid=await Video.findById(videoId)
+
+        if(!vid) throw new ApiError(400,"No such video exists!")
+
+        const newUser=await User.findByIdAndUpdate(
+            user._id,
+            { $push: { watchHistory: videoId } },
+            { new: true }
+        )
+
+        if(!newUser) throw new ApiError(400,"Unable to add video to watch history!")
+
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                "Added video to watch history!"
+            )
+        )
+
+    }
+)
+
+
 export {
-    createVideo, deleteVideo
+    createVideo, deleteVideo, addVideoToWatchHistory
 }
